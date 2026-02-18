@@ -1,0 +1,19 @@
+[
+  {
+    "id": "1",
+    "firstName": "Elon",
+    "lastName": "Musk",
+    "email": "elon@spacex.com",
+    "phones": [
+      { "id": "p1", "number": "555-0101", "label": "Movil" },
+      { "id": "p2", "number": "555-0102", "label": "Trabajo" }
+    ]
+  },
+  {
+    "id": "2",
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "email": "ada@computing.org",
+    "phones": [{ "id": "p3", "number": "123-4567", "label": "Personal" }]
+  }
+]

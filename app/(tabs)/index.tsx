@@ -1,98 +1,149 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ContactCard } from '@/src/components/ContactCard';
+import { useContacts } from '@/src/hooks/useContacts';
+import { contactService } from '@/src/services/contactService';
+import { Link, useRouter } from 'expo-router';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function ContactsScreen() {
+  const router = useRouter();
+  const { contacts, isLoading, searchQuery, setSearchQuery, isSelectionMode,setIsSelectionMode, selectedIds, toggleSelection,selectAll,deleteSelected,RefreshContacts} = useContacts();
+  
+  // funcion mara manejar el toque simple
+  const handlePress = (id: string) => {
+    if (isSelectionMode) {
+      toggleSelection(id);
+    } else {
+      // si no hay seleccion navegamos al detalle
+      router.push({pathname: "/details/[id]", params: {id}})
+    }
+  };
 
-export default function HomeScreen() {
+
+  // alerta de confirmacion para borrado masivo
+  const confirmDelete = () => {
+    Alert.alert("Eliminar contactos", 
+      `¿Estás seguro de eliminar ${selectedIds.length} contactos?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Eliminar", style: "destructive", onPress: deleteSelected }
+      ]
+    )
+  }
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#007AFF" style={{ flex: 1 }} />
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      {/* BARRA DE BÚSQUEDA: Solo se muestra si NO estamos seleccionando para borrar */}
+    {!isSelectionMode && (
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar por nombre, apellido o número..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          clearButtonMode="while-editing" // Bonus para iOS
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+      </View>
+    )}
+      {/* barra de acciones: solo se ve en modo seleccion */}
+      {isSelectionMode && (
+        <View style ={styles.actionBar}>
+          <TouchableOpacity onPress={selectAll}>
+            <Text style={styles.actionText}>
+              {selectedIds.length === contacts.length ? "Desmarcar" : "Todo"}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.countText}>
+            {selectedIds.length} Seleccionados
+          </Text>
+          <TouchableOpacity onPress={confirmDelete}>
+            <Text style={[styles.actionText, {color: '#FF3B30'}]}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+     <FlatList
+        data={contacts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ContactCard 
+            item={item} 
+            isSelectionMode={isSelectionMode}
+            isSelected={selectedIds.includes(item.id)}
+            onPress={() => handlePress(item.id)}
+            onLongPress={() => {
+              setIsSelectionMode(true);
+              toggleSelection(item.id);
+            }}
+            onDeleteOne={(id) => {
+              Alert.alert("Eliminar", "¿Borrar este contacto?", [
+                {text: "No"},
+                {
+                  text: "Sí",
+                  onPress: async() => {
+                    await contactService.deleteContacts([id]);
+                    RefreshContacts();
+                  }
+                }
+              ]);
+            }}
+          />
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No hay contactos guardados.</Text>
+        }
+      />{/* Botón Flotante (Ocultar si estamos seleccionando para evitar errores) */}
+      {!isSelectionMode && (
+        <TouchableOpacity 
+          style={styles.fab} 
+          onPress={() => router.push({ pathname: "/details/[id]", params: { id: 'new' } })}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }
-
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: { flex: 1, backgroundColor: '#F0F2F5', padding: 10 },
+  // Nueva barra de herramientas superior
+  actionBar: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  actionText: { color: '#007AFF', fontWeight: 'bold', fontSize: 16 },
+  countText: { fontWeight: '600', fontSize: 16, color: '#333' },
+  fab: {
+    position: 'absolute', right: 20, bottom: 20,
+    backgroundColor: '#007AFF', width: 60, height: 60,
+    borderRadius: 30, justifyContent: 'center', alignItems: 'center',
+    elevation: 5, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 5
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  fabText: { color: 'white', fontSize: 30 },
+  emptyText: { textAlign: 'center', marginTop: 50, color: 'gray', fontSize: 16 },
+  searchContainer: {
+    marginBottom: 10,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    fontSize: 16,
   },
 });
