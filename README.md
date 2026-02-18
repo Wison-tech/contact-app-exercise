@@ -1,51 +1,82 @@
-# Welcome to your Expo app 👋
+# 📱 Contact Manager App - Mobile Exercise
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Esta es una aplicación móvil desarrollada con **React Native** y **Expo** para la gestión de contactos. El proyecto fue diseñado siguiendo principios de modularidad, componentes reutilizables y persistencia de datos local.
 
-## Get started
+## 🚀 Características principales
+- **Carga Inicial:** Los datos se cargan desde un archivo JSON local que simula una API.
+- **Persistencia:** Uso de `AsyncStorage` para guardar, editar y eliminar contactos de forma permanente en el dispositivo.
+- **Búsqueda Avanzada:** Filtro en tiempo real por nombre, apellido o número de teléfono.
+- **Navegación:** Implementación de `expo-router` para un flujo intuitivo entre la lista y el formulario.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🌟 Bonus Completados
 
-2. Start the app
+### 1. Validación de Formularios
+- **Campos Obligatorios:** No permite guardar si falta el nombre o el apellido.
+- **Formato de Email:** Validación mediante expresiones regulares (Regex) para asegurar correos válidos.
+- **Evitar Duplicados:** El sistema verifica que no existan números de teléfono idénticos dentro de un mismo contacto.
 
-   ```bash
-   npx expo start
-   ```
+### 2. Múltiples Teléfonos por Contacto
+- **Interfaz Dinámica:** Permite agregar tantos números como sea necesario.
+- **Gestión Individual:** Cada fila de teléfono incluye su propia "etiqueta" (Ej: Casa, Trabajo, Móvil) y un botón de eliminación rápida (**X**).
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🛠️ Estructura del Proyecto
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+src/
+ ├── components/       # Componentes reutilizables (PhoneInput, ContactCard)
+ ├── services/         # Lógica de almacenamiento (AsyncStorage) y carga de JSON
+ ├── types/            # Definiciones de TypeScript para Contactos y Teléfonos
+ └── hooks/            # Hooks personalizados para manejar el estado global
+app/                   # Sistema de rutas (Lista de contactos y Formulario)
+assets/                # Datos iniciales (contacts.json) e imágenes
 ```
+## 📂 Funcionamiento del JSON Inicial
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+La aplicación utiliza un flujo de datos inteligente para asegurar que el usuario siempre tenga información disponible desde el primer uso:
 
-## Learn more
+1. **Ubicación:** El archivo fuente se encuentra en `src/assets/data/contacts.json`.
+2. **Hidratación Automática:** Al iniciar, el `contactService` verifica si existe información en el almacenamiento local.
+3. **Carga Única:** Si el dispositivo no tiene datos (primera ejecución), la app importa el JSON inicial.
+4. **Control Total:** Una vez realizada la carga inicial, todos los cambios se gestionan exclusivamente en el **AsyncStorage**, permitiendo que las ediciones y nuevos contactos persistan.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## ⚙️ Instalación y Ejecución
 
-## Join the community
+Sigue estos pasos para poner en marcha el proyecto en tu entorno local:
 
-Join our community of developers creating universal apps.
+### 1. Clonar el repositorio
+```bash
+git clone [https://github.com/Wison-tech/contact-app-exercise.git](https://github.com/Wison-tech/contact-app-exercise.git)
+cd contact-app-exercise 
+```
+### 2. Instalar dependencias
+```bash
+npm install
+```
+### 3. Iniciar el servidor de Expo
+```bash
+npx expo start
+```
+### 4. Visualización
+Dispositivos Físicos: Escanea el código QR desde la terminal con la app Expo Go (disponible en Play Store y App Store).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# contact-app-exercise
+Emuladores: Una vez iniciado el servidor, presiona a para abrir en Android o i para iOS.
+
+### 💡 Detalles Técnicos
+El proyecto destaca por las siguientes implementaciones técnicas:
+
+TypeScript: Uso de interfaces y tipos estrictos para garantizar la integridad de los datos.
+
+React Hooks: Uso de useState para formularios, useEffect para carga de datos y useMemo para optimizar el filtrado de la lista.
+
+Diseño Adaptativo: Uso de Flexbox y unidades relativas para asegurar que la interfaz sea funcional en diversos tamaños de pantalla.
+
+Componentes Modulares: Separación de lógica en componentes como PhoneInput y ContactCard para facilitar el mantenimiento.
+
+ ### 👤 Autor
+Desarrollado por Wison-tech como parte de una prueba técnica para el rol de Desarrollador Mobile.
