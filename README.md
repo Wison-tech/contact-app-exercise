@@ -1,4 +1,4 @@
-# 📱 Contact Manager App - Mobile Exercise
+#  Contact Manager App - Mobile Exercise
 
 
 
@@ -6,7 +6,7 @@ Esta es una aplicación móvil desarrollada con **React Native** y **Expo** para
 
 
 
-## 🚀 Características principales
+##  Características principales
 
 - **Carga Inicial:** Los datos se cargan desde un archivo JSON local que simula una API.
 
@@ -22,7 +22,7 @@ Esta es una aplicación móvil desarrollada con **React Native** y **Expo** para
 
 
 
-## 🌟 Bonus Completados
+##  Bonus Completados
 
 
 
@@ -46,14 +46,14 @@ Esta es una aplicación móvil desarrollada con **React Native** y **Expo** para
 
 ---
 
-### 🗑️ Selección Múltiple y Eliminación Masiva (UX Avanzada)
+###  Selección Múltiple y Eliminación Masiva (UX Avanzada)
 - **Activación por Long Press:** Al mantener presionado un contacto en la lista, la aplicación activa el modo de selección, permitiendo marcar uno o varios elementos.
 - **Acciones en Bloque:** Facilita la limpieza de la agenda al permitir eliminar múltiples registros del `AsyncStorage` con una sola confirmación.
 - **Búsqueda Dinámica Integrada:** La barra de búsqueda permanece funcional durante la selección, permitiendo filtrar contactos por nombre o teléfono y marcarlos sin perder el estado de la selección previa.
 - **Feedback Visual:** Incluye un contador en tiempo real y resaltado de elementos para indicar claramente qué contactos están listos para ser procesados.
 
 
-## 🛠️ Estructura del Proyecto
+## Estructura del Proyecto
 
 
 
@@ -75,7 +75,7 @@ assets/                # Datos iniciales (contacts.json) e imágenes
 
 ```
 
-## 📂 Funcionamiento del JSON Inicial
+## Funcionamiento del JSON Inicial
 
 
 
@@ -97,7 +97,7 @@ La aplicación utiliza un flujo de datos inteligente para asegurar que el usuari
 
 
 
-## ⚙️ Instalación y Ejecución
+## Instalación y Ejecución
 
 
 
@@ -141,7 +141,7 @@ Emuladores: Una vez iniciado el servidor, presiona a para abrir en Android o i p
 
 
 
-### 💡 Detalles Técnicos
+### Detalles Técnicos
 
 El proyecto destaca por las siguientes implementaciones técnicas:
 
@@ -163,6 +163,6 @@ Componentes Modulares: Separación de lógica en componentes como PhoneInput y C
 
 
 
- ### 👤 Autor
+ ### Autor
 
 Desarrollado por Wison-tech como parte de una prueba técnica para el rol de Desarrollador Mobile.
